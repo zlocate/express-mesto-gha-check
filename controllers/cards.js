@@ -40,6 +40,13 @@ export const deleteCard = (req, res) => {
           .sendError({ res, message: messages.card.notFound });
         return;
       }
+
+      if (error.name === 'CastError') {
+        BadRequestError
+          .sendError({ res, message: messages.common.badId });
+        return;
+      }
+
       handleDefaultError({ res, error });
     });
 };

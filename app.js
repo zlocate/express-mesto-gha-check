@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import { usersRouter } from './routes/users.js';
 import { cardsRouter } from './routes/cards.js';
+import { NotFoundError } from './utils/errors/index.js';
+import { messages } from './utils/consts.js';
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -19,6 +21,11 @@ app.use((req, res, next) => {
 
 app.use('/users', usersRouter);
 app.use('/cards', cardsRouter);
+
+app.use((req, res) => {
+  NotFoundError
+    .sendError({ res, message: messages.common.notFound });
+});
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

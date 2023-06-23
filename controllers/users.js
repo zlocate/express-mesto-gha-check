@@ -27,12 +27,10 @@ export const getUserById = async (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError();
-      }
-      res.send(user);
+    .orFail(() => {
+      throw new NotFoundError();
     })
+    .then((user) => res.send(user))
     .catch((error) => {
       if (error instanceof NotFoundError) {
         NotFoundError

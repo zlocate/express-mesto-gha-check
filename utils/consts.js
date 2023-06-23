@@ -1,6 +1,7 @@
 export const messages = {
   common: {
     badId: 'Передан некорректный _id',
+    notFound: 'По указанному пути ничего не найдено',
   },
   user: {
     notFound: 'Пользователь по указанному _id не найден',
