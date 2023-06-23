@@ -7,7 +7,8 @@ import { NotFoundError } from './utils/errors/index.js';
 import { messages } from './utils/consts.js';
 
 const app = express();
-mongoose.connect(DB_URI);
+// Дублирование дефолтного значения иначе автотесты не проходят
+mongoose.connect(DB_URI ?? 'mongodb://localhost:27017/mestodb');
 
 app.use(express.json());
 
