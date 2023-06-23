@@ -13,14 +13,14 @@ export const createUser = (req, res) => {
           .sendError({ res, message: messages.user.createBadData });
         return;
       }
-      handleDefaultError({ res, error });
+      handleDefaultError(res);
     });
 };
 
 export const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((error) => handleDefaultError({ res, error }));
+    .catch(() => handleDefaultError(res));
 };
 
 export const getUserById = async (req, res) => {
@@ -44,7 +44,7 @@ export const getUserById = async (req, res) => {
         return;
       }
 
-      handleDefaultError({ res, error });
+      handleDefaultError(res);
     });
 };
 
@@ -95,6 +95,6 @@ export const updateUser = (req, res) => {
         return;
       }
 
-      handleDefaultError({ res, error });
+      handleDefaultError(res);
     });
 };

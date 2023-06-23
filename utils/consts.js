@@ -2,6 +2,7 @@ export const messages = {
   common: {
     badId: 'Передан некорректный _id',
     notFound: 'По указанному пути ничего не найдено',
+    serverError: 'На сервере произошла ошибка',
   },
   user: {
     notFound: 'Пользователь по указанному _id не найден',

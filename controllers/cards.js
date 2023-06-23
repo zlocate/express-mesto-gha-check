@@ -14,14 +14,14 @@ export const createCard = (req, res) => {
           .sendError({ res, message: messages.card.badData });
         return;
       }
-      handleDefaultError({ res, error });
+      handleDefaultError(res);
     });
 };
 
 export const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch((error) => handleDefaultError({ res, error }));
+    .catch(() => handleDefaultError(res));
 };
 
 export const deleteCard = (req, res) => {
@@ -47,7 +47,7 @@ export const deleteCard = (req, res) => {
         return;
       }
 
-      handleDefaultError({ res, error });
+      handleDefaultError(res);
     });
 };
 
@@ -76,7 +76,7 @@ export const likeCard = (req, res) => {
         return;
       }
 
-      handleDefaultError({ res, error });
+      handleDefaultError(res);
     });
 };
 
@@ -105,6 +105,6 @@ export const dislikeCard = (req, res) => {
         return;
       }
 
-      handleDefaultError({ res, error });
+      handleDefaultError(res);
     });
 };

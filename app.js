@@ -1,13 +1,13 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import { PORT, DB_URI } from './env.config.js';
 import { usersRouter } from './routes/users.js';
 import { cardsRouter } from './routes/cards.js';
 import { NotFoundError } from './utils/errors/index.js';
 import { messages } from './utils/consts.js';
 
-const { PORT = 3000 } = process.env;
 const app = express();
-mongoose.connect('mongodb://localhost:27017/mestodb');
+mongoose.connect(DB_URI);
 
 app.use(express.json());
 
