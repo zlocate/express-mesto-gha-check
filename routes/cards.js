@@ -6,7 +6,7 @@ import {
   likeCard,
   dislikeCard,
 } from '../controllers/cards.js';
-import { cardIdCelebrate, createCardCelebrate } from '../models/card.js';
+import { cardIdCelebrate, createCardCelebrate } from '../validators/cards.js';
 
 const router = express.Router();
 

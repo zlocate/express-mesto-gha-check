@@ -2,7 +2,11 @@ import express from 'express';
 import {
   getUsers, getUserById, updateUser, getCurrentUser,
 } from '../controllers/users.js';
-import { updateAvatarCelebrate, updateUserCelebrate, userIdCelebrate } from '../models/user.js';
+import {
+  updateAvatarCelebrate,
+  updateUserCelebrate,
+  userIdCelebrate,
+} from '../validators/users.js';
 
 const router = express.Router();
 

@@ -10,7 +10,7 @@ import { messages } from './utils/consts.js';
 import { createUser, login } from './controllers/users.js';
 import { authMiddleware } from './middlewares/auth.js';
 import { errorsMiddleware } from './middlewares/errors.js';
-import { signinCelebrate, signupCelebrate } from './models/user.js';
+import { signinCelebrate, signupCelebrate } from './validators/users.js';
 
 const app = express();
 // Дублирование дефолтного значения иначе автотесты не проходят
