@@ -66,4 +66,10 @@ export const updateAvatarCelebrate = celebrate({
   }),
 });
 
+export const userIdCelebrate = celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().required().length(24).hex(),
+  }),
+});
+
 export const User = mongoose.model('user', userSchema);

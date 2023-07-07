@@ -1,7 +1,9 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { User } from '../models/user.js';
-import { NotFoundError, BadRequestError } from '../utils/errors/index.js';
+import { NotFoundError, UnauthorizedError } from '../utils/errors/index.js';
 import { messages } from '../utils/consts.js';
+import { SECRET_KEY } from '../env.config.js';
 
 export const createUser = (req, res, next) => {
   const {
@@ -12,7 +14,15 @@ export const createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.send(user))
+    .then((user) => {
+      const {
+        _id, name, about, avatar, email,
+      } = user;
+
+      res.send({
+        _id, name, about, avatar, email,
+      });
+    })
     .catch(next);
 };
 
@@ -58,6 +68,38 @@ export const updateUser = (req, res, next) => {
     })
     .then((user) => {
       res.send(user);
+    })
+    .catch(next);
+};
+
+export const login = (req, res, next) => {
+  const { password, email } = req.body;
+
+  User.findOne({ email })
+    .select('+password')
+    .orFail(() => {
+      throw new UnauthorizedError(messages.user.notFound);
+    })
+    .then((user) => {
+      bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw new UnauthorizedError(messages.user.loginBadData);
+          }
+          const token = jwt.sign(
+            { _id: user._id },
+            SECRET_KEY,
+            { expiresIn: '7d' },
+          );
+          res
+            .cookie('jwt', token, {
+              maxAge: 3600000,
+              httpOnly: true,
+              sameSite: true,
+            });
+          res.send({ message: messages.common.authorized });
+        })
+        .catch(next);
     })
     .catch(next);
 };
