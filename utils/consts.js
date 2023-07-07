@@ -5,10 +5,12 @@ export const messages = {
     serverError: 'На сервере произошла ошибка',
   },
   user: {
-    notFound: 'Пользователь по указанному _id не найден',
+    notFound: 'Пользователь не найден',
     createBadData: 'Переданы некорректные данные при создании пользователя',
     updateBadData: 'Переданы некорректные данные при обновлении профиля',
     updateWrongFields: 'Переданы некорректные поля для обновления пользователя',
+    loginBadData: 'Передан неверный логин или пароль',
+    conflictEmail: 'Пользователь с указанным email уже существует',
   },
   card: {
     notFound: 'Карточка с указанным _id не найдена',
@@ -19,6 +21,9 @@ export const messages = {
 
 export const statuses = {
   badRequest: 400,
+  unauthorized: 401,
+  forbidden: 403,
   notFound: 404,
+  conflict: 409,
   default: 500,
 };

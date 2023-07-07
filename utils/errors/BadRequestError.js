@@ -6,11 +6,4 @@ export class BadRequestError extends Error {
     this.name = 'BadRequestError';
     this.statusCode = statuses.badRequest;
   }
-
-  static sendError({ res, message, payload }) {
-    res.status(statuses.badRequest).send({
-      message,
-      payload,
-    });
-  }
 }

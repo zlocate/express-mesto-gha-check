@@ -1,69 +1,52 @@
+import bcrypt from 'bcrypt';
 import { User } from '../models/user.js';
-import { NotFoundError, handleDefaultError, BadRequestError } from '../utils/errors/index.js';
+import { NotFoundError, BadRequestError } from '../utils/errors/index.js';
 import { messages } from '../utils/consts.js';
 
-export const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+export const createUser = (req, res, next) => {
+  const {
+    name, about, avatar, password, email,
+  } = req.body;
 
-  User.create({ name, about, avatar })
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
     .then((user) => res.send(user))
-    .catch((error) => {
-      if (error.name === 'ValidationError') {
-        BadRequestError
-          .sendError({ res, message: messages.user.createBadData });
-        return;
-      }
-      handleDefaultError(res);
-    });
+    .catch(next);
 };
 
-export const getUsers = (req, res) => {
+export const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => handleDefaultError(res));
+    .catch(next);
 };
 
-export const getUserById = async (req, res) => {
+export const getUserById = async (req, res, next) => {
   const { userId } = req.params;
 
   User.findById(userId)
     .orFail(() => {
-      throw new NotFoundError();
+      throw new NotFoundError(messages.user.notFound);
     })
     .then((user) => res.send(user))
-    .catch((error) => {
-      if (error instanceof NotFoundError) {
-        NotFoundError
-          .sendError({ res, message: messages.user.notFound });
-        return;
-      }
-
-      if (error.name === 'CastError') {
-        BadRequestError
-          .sendError({ res, message: messages.common.badId });
-        return;
-      }
-
-      handleDefaultError(res);
-    });
+    .catch(next);
 };
 
-export const updateUser = (req, res) => {
+export const getCurrentUser = async (req, res, next) => {
+  const userId = req?.user?._id;
+
+  User.findById(userId)
+    .orFail(() => {
+      throw new NotFoundError(messages.user.notFound);
+    })
+    .then((user) => res.send(user))
+    .catch(next);
+};
+
+export const updateUser = (req, res, next) => {
   const { name, about, avatar } = req.body;
   const id = req.user._id;
-
-  if (Object.keys(req.body).some((key) => !(key in User.schema.obj))) {
-    const requestFields = Object.keys(req.body).join(', ');
-    const schemaFields = Object.keys(User.schema.obj).join(', ');
-
-    BadRequestError
-      .sendError({
-        res,
-        message: messages.user.updateWrongFields,
-        payload: `Поля ${requestFields} не соответствуют ${schemaFields}`,
-      });
-    return;
-  }
 
   User.findByIdAndUpdate(
     id,
@@ -76,25 +59,5 @@ export const updateUser = (req, res) => {
     .then((user) => {
       res.send(user);
     })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        BadRequestError
-          .sendError({ res, message: messages.common.badId });
-        return;
-      }
-
-      if (error instanceof NotFoundError) {
-        NotFoundError
-          .sendError({ res, message: messages.user.notFound });
-        return;
-      }
-
-      if (error.name === 'ValidationError') {
-        BadRequestError
-          .sendError({ res, message: messages.user.updateBadData });
-        return;
-      }
-
-      handleDefaultError(res);
-    });
+    .catch(next);
 };

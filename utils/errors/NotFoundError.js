@@ -6,8 +6,4 @@ export class NotFoundError extends Error {
     this.name = 'NotFoundError';
     this.statusCode = statuses.notFound;
   }
-
-  static sendError({ res, message }) {
-    res.status(statuses.notFound).send({ message });
-  }
 }

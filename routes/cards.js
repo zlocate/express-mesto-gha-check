@@ -6,14 +6,15 @@ import {
   likeCard,
   dislikeCard,
 } from '../controllers/cards.js';
+import { cardIdCelebrate, createCardCelebrate } from '../models/card.js';
 
 const router = express.Router();
 
 router.get('/', getCards);
-router.post('/', createCard);
-router.delete('/:cardId', deleteCard);
-router.put('/:cardId/likes', likeCard);
-router.delete('/:cardId/likes', dislikeCard);
+router.post('/', createCardCelebrate, createCard);
+router.delete('/:cardId', cardIdCelebrate, deleteCard);
+router.put('/:cardId/likes', cardIdCelebrate, likeCard);
+router.delete('/:cardId/likes', cardIdCelebrate, dislikeCard);
 
 export {
   router as cardsRouter,

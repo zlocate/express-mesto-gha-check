@@ -1,57 +1,45 @@
 import { Card } from '../models/card.js';
-import { NotFoundError, handleDefaultError, BadRequestError } from '../utils/errors/index.js';
+import {
+  NotFoundError, ForbiddenError,
+} from '../utils/errors/index.js';
 import { messages } from '../utils/consts.js';
 
-export const createCard = (req, res) => {
+export const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
     .then((card) => res.send(card))
-    .catch((error) => {
-      if (error.name === 'ValidationError') {
-        BadRequestError
-          .sendError({ res, message: messages.card.badData });
-        return;
-      }
-      handleDefaultError(res);
-    });
+    .catch(next);
 };
 
-export const getCards = (req, res) => {
+export const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch(() => handleDefaultError(res));
+    .catch(next);
 };
 
-export const deleteCard = (req, res) => {
+export const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
 
-  Card.findByIdAndRemove(cardId)
+  Card.findById(cardId)
     .orFail(() => {
-      throw new NotFoundError();
+      throw new NotFoundError(messages.card.notFound);
     })
-    .then(() => {
-      res.send({ message: messages.card.deleted });
+    .then((card) => {
+      if (card.owner.toString() !== req.user._id) {
+        throw new ForbiddenError('Удалять можно только свою карточку');
+      }
+      Card.findByIdAndRemove(cardId)
+        .then(() => {
+          res.send({ message: messages.card.deleted });
+        })
+        .catch(next);
     })
-    .catch((error) => {
-      if (error instanceof NotFoundError) {
-        NotFoundError
-          .sendError({ res, message: messages.card.notFound });
-        return;
-      }
-
-      if (error.name === 'CastError') {
-        BadRequestError
-          .sendError({ res, message: messages.common.badId });
-        return;
-      }
-
-      handleDefaultError(res);
-    });
+    .catch(next);
 };
 
-export const likeCard = (req, res) => {
+export const likeCard = (req, res, next) => {
   const { cardId } = req.params;
 
   Card.findByIdAndUpdate(
@@ -60,27 +48,13 @@ export const likeCard = (req, res) => {
     { new: true },
   )
     .orFail(() => {
-      throw new NotFoundError();
+      throw new NotFoundError(messages.card.notFound);
     })
     .then((card) => res.send(card))
-    .catch((error) => {
-      if (error instanceof NotFoundError) {
-        NotFoundError
-          .sendError({ res, message: messages.card.notFound });
-        return;
-      }
-
-      if (error.name === 'CastError') {
-        BadRequestError
-          .sendError({ res, message: messages.common.badId });
-        return;
-      }
-
-      handleDefaultError(res);
-    });
+    .catch(next);
 };
 
-export const dislikeCard = (req, res) => {
+export const dislikeCard = (req, res, next) => {
   const { cardId } = req.params;
 
   Card.findByIdAndUpdate(
@@ -89,22 +63,8 @@ export const dislikeCard = (req, res) => {
     { new: true },
   )
     .orFail(() => {
-      throw new NotFoundError();
+      throw new NotFoundError(messages.card.notFound);
     })
     .then((card) => res.send(card))
-    .catch((error) => {
-      if (error instanceof NotFoundError) {
-        NotFoundError
-          .sendError({ res, message: messages.card.notFound });
-        return;
-      }
-
-      if (error.name === 'CastError') {
-        BadRequestError
-          .sendError({ res, message: messages.common.badId });
-        return;
-      }
-
-      handleDefaultError(res);
-    });
+    .catch(next);
 };
