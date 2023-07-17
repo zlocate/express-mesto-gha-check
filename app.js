@@ -14,7 +14,7 @@ import { signinCelebrate, signupCelebrate } from './validators/users.js';
 
 const app = express();
 // Дублирование дефолтного значения иначе автотесты не проходят
-mongoose.connect(DB_URI ?? 'mongodb://localhost:27017/mestodb');
+mongoose.connect(DB_URI ?? 'mongodb://127.0.0.1:27017/mestodb');
 
 app.use(express.json());
 app.use(cookieParser());
