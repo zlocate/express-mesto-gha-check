@@ -3,8 +3,10 @@ import { UnauthorizedError } from '../utils/errors/index.js';
 import { SECRET_KEY } from '../env.config.js';
 
 export const authMiddleware = (req, res, next) => {
-  const { jwt: token } = req.cookies;
-
+  console.log(`Jwt Secret ${SECRET_KEY}`)
+  const { jwt:jwtCookie } = req.cookies;
+  const { authorization } = req.headers;
+  const token = jwtCookie || authorization?.replace('Bearer ', '');
   if (!token) {
     throw new UnauthorizedError('Необходима авторизация');
   }
